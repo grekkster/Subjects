@@ -1,0 +1,1 @@
+﻿select *, (select COUNT(*) from Kontakt where Kontakt.Ico=Subjekt.Ico) as PocetKontaktu from Subjekt;
