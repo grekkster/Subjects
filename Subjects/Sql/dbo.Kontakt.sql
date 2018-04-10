@@ -7,6 +7,6 @@
     [Vlozeno]       DATETIME      NULL,
     [Ico]           INT           NULL,
     PRIMARY KEY CLUSTERED ([Id] ASC),
-    CONSTRAINT [FK_Kontakt_Subjekt] FOREIGN KEY ([Ico]) REFERENCES [Subjekt] ([Ico])
+    CONSTRAINT [FK_Kontakt_Subjekt] FOREIGN KEY ([Ico]) REFERENCES [dbo].[Subjekt] ([Ico])
 );
 

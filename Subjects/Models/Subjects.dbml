@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="SubjectDB" Class="SubjectsDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\SubjectDB.mdf;Integrated Security=True" SettingsObjectName="Subjects.Properties.Settings" SettingsPropertyName="SubjectDBConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.Kontakt" Member="Kontakt">
+    <Type Name="Kontakt">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Jmeno" Type="System.String" DbType="NVarChar(60) NOT NULL" CanBeNull="false" />
+      <Column Name="Prijmeni" Type="System.String" DbType="NVarChar(60) NOT NULL" CanBeNull="false" />
+      <Column Name="DatumNarozeni" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+      <Column Name="Telefon" Type="System.String" DbType="NVarChar(16)" CanBeNull="true" />
+      <Column Name="Vlozeno" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Ico" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="Subjekt_Kontakt" Member="Subjekt" ThisKey="Ico" OtherKey="Ico" Type="Subjekt" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Subjekt" Member="Subjekt">
+    <Type Name="Subjekt">
+      <Column Name="Ico" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Nazev" Type="System.String" DbType="NVarChar(60)" CanBeNull="true" />
+      <Column Name="Ulice" Type="System.String" DbType="NVarChar(60)" CanBeNull="true" />
+      <Column Name="Obec" Type="System.String" DbType="NVarChar(60)" CanBeNull="true" />
+      <Column Name="Psc" Type="System.String" DbType="NChar(5)" CanBeNull="true" />
+      <Column Name="Poznamka" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Vlozeno" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="Subjekt_Kontakt" Member="Kontakt" ThisKey="Ico" OtherKey="Ico" Type="Kontakt" />
+    </Type>
+  </Table>
+</Database>
