@@ -35,12 +35,10 @@
             System.Windows.Forms.Label nazevLabel;
             System.Windows.Forms.Label icoLabel;
             this.btnOk = new System.Windows.Forms.Button();
-            this.btnClose = new System.Windows.Forms.Button();
             this.poznamkaTextBox = new System.Windows.Forms.TextBox();
             this.obecTextBox = new System.Windows.Forms.TextBox();
             this.uliceTextBox = new System.Windows.Forms.TextBox();
             this.nazevTextBox = new System.Windows.Forms.TextBox();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.icoTextBox = new System.Windows.Forms.TextBox();
             this.pscTextBox = new System.Windows.Forms.TextBox();
             poznamkaLabel = new System.Windows.Forms.Label();
@@ -49,7 +47,6 @@
             uliceLabel = new System.Windows.Forms.Label();
             nazevLabel = new System.Windows.Forms.Label();
             icoLabel = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.SuspendLayout();
             // 
             // poznamkaLabel
@@ -108,23 +105,13 @@
             // 
             // btnOk
             // 
-            this.btnOk.Location = new System.Drawing.Point(78, 188);
+            this.btnOk.Location = new System.Drawing.Point(182, 162);
             this.btnOk.Name = "btnOk";
             this.btnOk.Size = new System.Drawing.Size(75, 23);
             this.btnOk.TabIndex = 1;
             this.btnOk.Text = "Ok";
             this.btnOk.UseVisualStyleBackColor = true;
             this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
-            // 
-            // btnClose
-            // 
-            this.btnClose.Location = new System.Drawing.Point(182, 188);
-            this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(75, 23);
-            this.btnClose.TabIndex = 2;
-            this.btnClose.Text = "Close";
-            this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // poznamkaTextBox
             // 
@@ -158,19 +145,13 @@
             this.nazevTextBox.Size = new System.Drawing.Size(179, 20);
             this.nazevTextBox.TabIndex = 20;
             // 
-            // numericUpDown1
-            // 
-            this.numericUpDown1.Location = new System.Drawing.Point(78, 162);
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(179, 20);
-            this.numericUpDown1.TabIndex = 29;
-            // 
             // icoTextBox
             // 
             this.icoTextBox.Location = new System.Drawing.Point(78, 6);
             this.icoTextBox.Name = "icoTextBox";
             this.icoTextBox.Size = new System.Drawing.Size(179, 20);
             this.icoTextBox.TabIndex = 18;
+            this.icoTextBox.TextChanged += new System.EventHandler(this.icoTextBox_TextChanged);
             // 
             // pscTextBox
             // 
@@ -179,13 +160,14 @@
             this.pscTextBox.Name = "pscTextBox";
             this.pscTextBox.Size = new System.Drawing.Size(179, 20);
             this.pscTextBox.TabIndex = 26;
+            this.pscTextBox.TextChanged += new System.EventHandler(this.pscTextBox_TextChanged);
             // 
             // FormEditSubject
             // 
+            this.AcceptButton = this.btnOk;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(271, 216);
-            this.Controls.Add(this.numericUpDown1);
+            this.ClientSize = new System.Drawing.Size(271, 192);
             this.Controls.Add(poznamkaLabel);
             this.Controls.Add(this.poznamkaTextBox);
             this.Controls.Add(pscLabel);
@@ -198,12 +180,17 @@
             this.Controls.Add(this.nazevTextBox);
             this.Controls.Add(icoLabel);
             this.Controls.Add(this.icoTextBox);
-            this.Controls.Add(this.btnClose);
             this.Controls.Add(this.btnOk);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.KeyPreview = true;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "FormEditSubject";
+            this.ShowIcon = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Edit Subject";
             this.Load += new System.EventHandler(this.FormEditSubject_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormEditSubject_KeyDown);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -211,12 +198,10 @@
 
         #endregion
         private System.Windows.Forms.Button btnOk;
-        private System.Windows.Forms.Button btnClose;
         private System.Windows.Forms.TextBox poznamkaTextBox;
         private System.Windows.Forms.TextBox obecTextBox;
         private System.Windows.Forms.TextBox uliceTextBox;
         private System.Windows.Forms.TextBox nazevTextBox;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
         private System.Windows.Forms.TextBox icoTextBox;
         private System.Windows.Forms.TextBox pscTextBox;
     }
