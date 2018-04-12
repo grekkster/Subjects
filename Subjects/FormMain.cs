@@ -35,37 +35,9 @@ namespace Subjects
             //factory + DBConnection:
             //https://www.youtube.com/watch?v=OdDkFPO_nto
 
-            /*
-            string queryString = "select *, (select COUNT(*) from Kontakt where Kontakt.Ico = Subjekt.Ico) as PocetKontaktu from Subjekt";
-            DataSet dataset = new DataSet();
-            using (connection = new SqlConnection(connectionString))
-            {
-                SqlDataAdapter adapter = new SqlDataAdapter();
-                adapter.SelectCommand = new SqlCommand(
-                    queryString, connection);
-                adapter.Fill(dataset);
-                dataGridViewSubject.DataSource = dataset;
-            }
-
-            
-            using (connection = new SqlConnection(connectionString))
-            using (SqlCommand command = new SqlCommand(query, connection))
-            using (adapter = new SqlDataAdapter(command))
-            {
-                // subjekt
-                command.Parameters.AddWithValue("@Parameter", parameter);
-                adapter.Fill(dataTableSubjekt);
-                dataGridViewSubject.DataSource = dataTableSubjekt;
-
-                //kontakt
-                //adapter.SelectCommand = new SqlCommand(queryKontaktString, connection);
-                adapter.Fill(dataTableKontakt);
-                dataGridViewContact.DataSource = dataTableKontakt;
-            }
-            */
-
             // fill datagrids with database data
             RefreshData();
+
             // set initial column width
             dataGridViewSubject.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
             dataGridViewContact.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
@@ -75,10 +47,10 @@ namespace Subjects
         {
             try
             {
-                // Fill Subjekt and Kontakt dataGridView
+                // fill subject and contact dataGridView
                 DataSet dataset = new DataSet();
-                DataTable dataTableSubjekt = new DataTable();
-                DataTable dataTableKontakt = new DataTable();
+                DataTable dataTableSubject = new DataTable();
+                DataTable dataTableContact = new DataTable();
                 string querySubjektString = "SELECT *, (select COUNT(*) FROM Kontakt WHERE Kontakt.Ico = Subjekt.Ico) AS PocetKontaktu FROM Subjekt";
                 string queryKontaktString = "SELECT * FROM Kontakt";
                 using (connection = new SqlConnection(connectionString))
@@ -86,13 +58,13 @@ namespace Subjects
                 {
                     // subjekt
                     adapter.SelectCommand = new SqlCommand(querySubjektString, connection);
-                    adapter.Fill(dataTableSubjekt);
-                    dataGridViewSubject.DataSource = dataTableSubjekt;
+                    adapter.Fill(dataTableSubject);
+                    dataGridViewSubject.DataSource = dataTableSubject;
 
-                    // kontakt
+                    // contact
                     adapter.SelectCommand = new SqlCommand(queryKontaktString, connection);
-                    adapter.Fill(dataTableKontakt);
-                    dataGridViewContact.DataSource = dataTableKontakt;
+                    adapter.Fill(dataTableContact);
+                    dataGridViewContact.DataSource = dataTableContact;
                 }
             }
             catch (Exception exc)
@@ -103,12 +75,13 @@ namespace Subjects
 
         private void InsertSubject()
         {
-            //using (FormEditSubject formEditSubject = new FormEditSubject())
-            //{
-            //    formEditSubject.ShowDialog();
-            //}
             try
             {
+                //using (FormEditSubject formEditSubject = new FormEditSubject())
+                //{
+                //    formEditSubject.ShowDialog();
+                //}
+
                 string insertQuery = "INSERT INTO Subjekt VALUES (@Ico, @Nazev, @Ulice, @Obec, @Psc, @Poznamka, @Vlozeno)";
                 using (connection = new SqlConnection(connectionString))
                 using (SqlCommand command = new SqlCommand(insertQuery, connection))
@@ -148,20 +121,20 @@ namespace Subjects
             https://khanrahim.wordpress.com/2010/04/10/insert-update-delete-with-datagridview-control-in-c-windows-application/
             */
 
-            // get first selected item to update
-            DataGridViewRow selectedRow = GetSelectedRows().FirstOrDefault();
-
-            // nothing selected, return
-            if (selectedRow == null)
-                return;
-
-            //using (FormEditSubject formEditSubject = new FormEditSubject())
-            //{
-            //    formEditSubject.ShowDialog();
-            //}
-
             try
             {
+                // get first selected item to update
+                DataGridViewRow selectedRow = GetSelectedRows().FirstOrDefault();
+
+                // nothing selected, return
+                if (selectedRow == null)
+                    return;
+
+                //using (FormEditSubject formEditSubject = new FormEditSubject())
+                //{
+                //    formEditSubject.ShowDialog();
+                //}
+
                 string updateQuery = "UPDATE Subjekt SET Ico = @NewIco, Nazev = @Nazev, Ulice = @Ulice, Obec = @Obec, Psc = @Psc, Poznamka = @Poznamka," +
                     " Vlozeno = @Vlozeno WHERE Ico = @Ico";
                 //string updateQuery = "UPDATE Subjekt SET Ulice = @Ulice WHERE Ico = @Ico";
@@ -195,23 +168,13 @@ namespace Subjects
             }
         }
 
-        // get list of rows where any cell is selected
-        //private List<DataGridViewRow> GetSelectedRows()
+        // get rows where any cell is selected
         private IEnumerable<DataGridViewRow> GetSelectedRows()
         {
-            List<DataGridViewRow> selectedRows = new List<DataGridViewRow>();
-            //foreach (DataGridViewCell cell in dataGridViewSubject.SelectedCells)
-
-            //foreach (DataGridViewCell cell in dataGridViewSubject.SelectedCells.Cast<DataGridViewCell>().OrderBy(c => c.RowIndex))
-            ////. .OrderBy(c => c.Index))
-            //{
-            //    selectedRows.Add(dataGridViewSubject.Rows[cell.RowIndex]);
-            //}
-            //return selectedRows;
-
-            IEnumerable<DataGridViewRow> selectedRowss = dataGridViewSubject.SelectedCells.Cast<DataGridViewCell>()
-                .Select(cell => cell.OwningRow).Distinct().OrderBy(c => c.Index);
-            return selectedRowss;
+            return dataGridViewSubject.SelectedCells.Cast<DataGridViewCell>()
+                .Select(cell => cell.OwningRow)
+                .Distinct()
+                .OrderBy(row => row.Index);
         }
 
         private void DeleteSubject()
@@ -223,7 +186,6 @@ namespace Subjects
                 using (SqlCommand command = new SqlCommand(deleteQuery, connection))
                 {
                     // get selected item rows to be deleted
-                    //List<DataGridViewRow> selectedRows = GetSelectedRows();
                     IEnumerable<DataGridViewRow> selectedRows = GetSelectedRows();
 
                     // nothing selected, return
