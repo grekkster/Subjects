@@ -77,31 +77,33 @@ namespace Subjects
         {
             try
             {
-                //using (FormEditSubject formEditSubject = new FormEditSubject())
-                //{
-                //    formEditSubject.ShowDialog();
-                //}
-
-                string insertQuery = "INSERT INTO Subjekt VALUES (@Ico, @Nazev, @Ulice, @Obec, @Psc, @Poznamka, @Vlozeno)";
-                using (connection = new SqlConnection(connectionString))
-                using (SqlCommand command = new SqlCommand(insertQuery, connection))
+                using (FormEditSubject formEditSubject = new FormEditSubject(connectionString, FormSqlOperation.Insert))
                 {
-                    connection.Open();
-                    //TODO validace záznamů, data typy, stejný záznamy - test PK jestli existuje?
-                    //TODO ošetřit existující klíč - pohledat na netu jak se dělá?
-
-                    SqlParameter[] sqlParameters = new SqlParameter[] {
-                    new SqlParameter("@Ico", 321),
-                    new SqlParameter("@Nazev", "TestSubjekt1"),
-                    new SqlParameter("@Ulice", "Pernikova"),
-                    new SqlParameter("@Obec", "Turnov"),
-                    new SqlParameter("@Psc", 46001),
-                    new SqlParameter("@Poznamka", "žádná poznámka"),
-                    new SqlParameter("@Vlozeno", DateTime.Now)
-                };
-                    command.Parameters.AddRange(sqlParameters);
-                    command.ExecuteNonQuery();
+                    formEditSubject.ShowDialog();
                 }
+
+                //TODO provadet prikaz ve formu, nebo zde???
+
+                //string insertQuery = "INSERT INTO Subjekt VALUES (@Ico, @Nazev, @Ulice, @Obec, @Psc, @Poznamka, @Vlozeno)";
+                //using (connection = new SqlConnection(connectionString))
+                //using (SqlCommand command = new SqlCommand(insertQuery, connection))
+                //{
+                //    connection.Open();
+                //    //TODO validace záznamů, data typy, stejný záznamy - test PK jestli existuje?
+                //    //TODO ošetřit existující klíč - pohledat na netu jak se dělá?
+
+                //    SqlParameter[] sqlParameters = new SqlParameter[] {
+                //    new SqlParameter("@Ico", 321),
+                //    new SqlParameter("@Nazev", "TestSubjekt1"),
+                //    new SqlParameter("@Ulice", "Pernikova"),
+                //    new SqlParameter("@Obec", "Turnov"),
+                //    new SqlParameter("@Psc", 46001),
+                //    new SqlParameter("@Poznamka", "žádná poznámka"),
+                //    new SqlParameter("@Vlozeno", DateTime.Now)
+                //};
+                //    command.Parameters.AddRange(sqlParameters);
+                //    command.ExecuteNonQuery();
+                //}
             }
             catch (Exception exc)
             {
