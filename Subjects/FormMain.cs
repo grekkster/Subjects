@@ -83,6 +83,10 @@ namespace Subjects
                 }
 
                 //TODO provadet prikaz ve formu, nebo zde???
+                //if (w.ShowDialog(this) == DialogResult.OK)
+                //{
+                //    DoSomething();
+                //}
 
                 //string insertQuery = "INSERT INTO Subjekt VALUES (@Ico, @Nazev, @Ulice, @Obec, @Psc, @Poznamka, @Vlozeno)";
                 //using (connection = new SqlConnection(connectionString))

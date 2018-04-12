@@ -25,7 +25,12 @@ namespace Subjects
 
         public FormEditSubject(SqlConnection connection, FormSqlOperation sqlOperation, DataGridViewRow rowToUpdate)
         {
-
+            icoTextBox.Text = rowToUpdate.Cells["Ico"].ToString();
+            nazevTextBox.Text = rowToUpdate.Cells["Ico"].ToString();
+            uliceTextBox.Text = rowToUpdate.Cells["Ico"].ToString();
+            obecTextBox.Text = rowToUpdate.Cells["Ico"].ToString();
+            pscTextBox.Text = rowToUpdate.Cells["Ico"].ToString();
+            poznamkaTextBox.Text = rowToUpdate.Cells["Ico"].ToString();
         }
 
         private void FormEditSubject_Load(object sender, EventArgs e)
@@ -35,8 +40,13 @@ namespace Subjects
 
         private void btnOk_Click(object sender, EventArgs e)
         {
-            //TODO test povinnych hodnot! pokud OK -> provest prikaz
-
+            // data validation, show error messages, return if data invalid
+            var validationErrors = GetValidationErrors();
+            if (validationErrors.Count > 0)
+            {
+                MessageBox.Show(String.Join(Environment.NewLine, validationErrors), "Data Invalid", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
             try
             {
@@ -45,12 +55,6 @@ namespace Subjects
                 using (SqlCommand command = new SqlCommand(insertQuery, connection))
                 {
                     connection.Open();
-                    //TODO validace záznamů, data typy, stejný záznamy - test PK jestli existuje?
-                    //TODO ošetřit existující klíč - pohledat na netu jak se dělá?
-                    //if (w.ShowDialog(this) == DialogResult.OK)
-                    //{
-                    //    DoSomething();
-                    //}
 
                     SqlParameter[] sqlParameters = new SqlParameter[] {
                     new SqlParameter("@Ico", icoTextBox.Text),
@@ -64,6 +68,7 @@ namespace Subjects
                     command.Parameters.AddRange(sqlParameters);
                     command.ExecuteNonQuery();
                 }
+                MessageBox.Show("Record successfully added.", "Insert Successfull", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception exc)
             {
@@ -71,9 +76,66 @@ namespace Subjects
             }
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private List<string> GetValidationErrors()
+        {
+            var validationErrors = new List<string>();
+
+            //    icoTextBox.Text,
+            //    nazevTextBox.Text,
+            //    uliceTextBox.Text,
+            //    obecTextBox.Text,
+            //    pscTextBox.Text,
+            //    poznamkaTextBox.Text,
+
+            // Ico
+            try
+            {
+                var ico = UInt32.Parse(icoTextBox.Text);
+            }
+            catch (Exception exc)
+            {
+                validationErrors.Add("Enter valid Ico number.");
+            }
+
+            // Nazev
+            if (nazevTextBox.Text.Length > 60)
+            {
+                validationErrors.Add("Maximal Nazev length is 60 characters.");
+            }
+
+            // Ulice
+            if (uliceTextBox.Text.Length > 60)
+            {
+                validationErrors.Add("Maximal Ulice length is 60 characters.");
+            }
+
+            // Obec
+            if (obecTextBox.Text.Length > 60)
+            {
+                validationErrors.Add("Maximal Obec length is 60 characters.");
+            }
+
+            // Psc
+            try
+            {
+                var psc = UInt32.Parse(pscTextBox.Text);
+            }
+            catch (Exception exc)
+            {
+                validationErrors.Add("Enter valid Psc number.");
+            }
+
+            if (pscTextBox.Text.Length > 5)
+            {
+                validationErrors.Add("Maximal Psc length is 5 characters.");
+            }
+
+            return validationErrors;
         }
     }
 }
