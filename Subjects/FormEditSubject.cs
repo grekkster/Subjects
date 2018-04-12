@@ -27,7 +27,7 @@ namespace Subjects
 
         private void FormEditSubject_Load(object sender, EventArgs e)
         {
-
+            //todo udělat přes databinding, stejně jako zobrazení gridu, tak jen pro row, a na OK upravit podle něj hodnoty v DB!
         }
     }
 }

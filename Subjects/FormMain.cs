@@ -26,6 +26,7 @@ namespace Subjects
 
         private void FormMain_Load(object sender, EventArgs e)
         {
+            // get connection string from app config
             connectionString = ConfigurationManager.ConnectionStrings["SubjectDBConnectionString"].ConnectionString;
 
             //TODO - LINQ to SQL
@@ -63,58 +64,60 @@ namespace Subjects
             }
             */
 
+            // fill datagrids with database data
             RefreshData();
+            // set initial column width
+            dataGridViewSubject.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
+            dataGridViewContact.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
         }
-
-        //private void OpenConnection()
-        //{
-
-        //}
-
-        //private void CloseConnection()
-        //{
-
-        //}
 
         private void RefreshData()
         {
-            // Subjekt dataGridView
-            DataSet dataset = new DataSet();
-            DataTable dataTableSubjekt = new DataTable();
-            DataTable dataTableKontakt = new DataTable();
-            string querySubjektString = "select *, (select COUNT(*) from Kontakt where Kontakt.Ico = Subjekt.Ico) as PocetKontaktu from Subjekt";
-            string queryKontaktString = "select * from Kontakt";
-            using (connection = new SqlConnection(connectionString))
-            using (adapter = new SqlDataAdapter())
+            try
             {
-                // subjekt
-                adapter.SelectCommand = new SqlCommand(querySubjektString, connection);
-                adapter.Fill(dataTableSubjekt);
-                dataGridViewSubject.DataSource = dataTableSubjekt;
+                // Fill Subjekt and Kontakt dataGridView
+                DataSet dataset = new DataSet();
+                DataTable dataTableSubjekt = new DataTable();
+                DataTable dataTableKontakt = new DataTable();
+                string querySubjektString = "SELECT *, (select COUNT(*) FROM Kontakt WHERE Kontakt.Ico = Subjekt.Ico) AS PocetKontaktu FROM Subjekt";
+                string queryKontaktString = "SELECT * FROM Kontakt";
+                using (connection = new SqlConnection(connectionString))
+                using (adapter = new SqlDataAdapter())
+                {
+                    // subjekt
+                    adapter.SelectCommand = new SqlCommand(querySubjektString, connection);
+                    adapter.Fill(dataTableSubjekt);
+                    dataGridViewSubject.DataSource = dataTableSubjekt;
 
-                //kontakt
-                adapter.SelectCommand = new SqlCommand(queryKontaktString, connection);
-                adapter.Fill(dataTableKontakt);
-                dataGridViewContact.DataSource = dataTableKontakt;
+                    // kontakt
+                    adapter.SelectCommand = new SqlCommand(queryKontaktString, connection);
+                    adapter.Fill(dataTableKontakt);
+                    dataGridViewContact.DataSource = dataTableKontakt;
+                }
+            }
+            catch (Exception exc)
+            {
+                MessageBox.Show(exc.Message, "Refresh Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void InsertSubject()
         {
-            using (FormEditSubject formEditSubject = new FormEditSubject())
+            //using (FormEditSubject formEditSubject = new FormEditSubject())
+            //{
+            //    formEditSubject.ShowDialog();
+            //}
+            try
             {
-                formEditSubject.ShowDialog();
-            }
+                string insertQuery = "INSERT INTO Subjekt VALUES (@Ico, @Nazev, @Ulice, @Obec, @Psc, @Poznamka, @Vlozeno)";
+                using (connection = new SqlConnection(connectionString))
+                using (SqlCommand command = new SqlCommand(insertQuery, connection))
+                {
+                    connection.Open();
+                    //TODO validace záznamů, data typy, stejný záznamy - test PK jestli existuje?
+                    //TODO ošetřit existující klíč - pohledat na netu jak se dělá?
 
-            string insertQuery = "INSERT INTO Subjekt VALUES (@Ico, @Nazev, @Ulice, @Obec, @Psc, @Poznamka, @Vlozeno)";
-            using (connection = new SqlConnection(connectionString))
-            using (SqlCommand command = new SqlCommand(insertQuery, connection))
-            {
-                connection.Open();
-                //TODO validace záznamů, data typy, stejný záznamy - test PK jestli existuje?
-                //TODO ošetřit existující klíč - pohledat na netu jak se dělá?
-
-                SqlParameter[] sqlParameters = new SqlParameter[] {
+                    SqlParameter[] sqlParameters = new SqlParameter[] {
                     new SqlParameter("@Ico", 321),
                     new SqlParameter("@Nazev", "TestSubjekt1"),
                     new SqlParameter("@Ulice", "Pernikova"),
@@ -123,24 +126,53 @@ namespace Subjects
                     new SqlParameter("@Poznamka", "žádná poznámka"),
                     new SqlParameter("@Vlozeno", DateTime.Now)
                 };
-                command.Parameters.AddRange(sqlParameters);
-                command.ExecuteNonQuery();
+                    command.Parameters.AddRange(sqlParameters);
+                    command.ExecuteNonQuery();
+                }
+            }
+            catch (Exception exc)
+            {
+                MessageBox.Show(exc.Message, "Insert Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void EditSubject()
         {
-            string updateQuery = "UPDATE Subjekt SET Ico = @NewIco, Nazev = @Nazev, Ulice = @Ulice, Obec = @Obec, Psc = @Psc, Poznamka = @Poznamka," +
-                " Vlozeno = @Vlozeno WHERE Ico = @Ico";
-            //string updateQuery = "UPDATE Subjekt SET Ulice = @Ulice WHERE Ico = @Ico";
-            using (connection = new SqlConnection(connectionString))
-            using (SqlCommand command = new SqlCommand(updateQuery, connection))
-            {
-                connection.Open();
-                //TODO validace záznamů, data typy, stejný záznamy - test PK jestli existuje?
-                // TODO padá pokud upravím ičo na již existující ičo
+            //TODO vzít selected row, předat jako parametr a buď pracovat přimo s adaptérem pro row a zavolat update, nebo jen vzít hodnoty a zavolat novej query jen s daty
+            /*
+            When you want to send your changes to the database you can just call the adapter.update method...
+            adapter.Update(ds);
+            https://social.msdn.microsoft.com/Forums/en-US/8db841fc-ffa7-4519-b6f5-d054c7190948/insert-deleting-updating-records-into-database-using-datagridview-in-visual-c?forum=csharplanguage
+            ***
 
-                SqlParameter[] sqlParameters = new SqlParameter[] {
+            https://khanrahim.wordpress.com/2010/04/10/insert-update-delete-with-datagridview-control-in-c-windows-application/
+            */
+
+            // get first selected item to update
+            DataGridViewRow selectedRow = GetSelectedRows().FirstOrDefault();
+
+            // nothing selected, return
+            if (selectedRow == null)
+                return;
+
+            //using (FormEditSubject formEditSubject = new FormEditSubject())
+            //{
+            //    formEditSubject.ShowDialog();
+            //}
+
+            try
+            {
+                string updateQuery = "UPDATE Subjekt SET Ico = @NewIco, Nazev = @Nazev, Ulice = @Ulice, Obec = @Obec, Psc = @Psc, Poznamka = @Poznamka," +
+                    " Vlozeno = @Vlozeno WHERE Ico = @Ico";
+                //string updateQuery = "UPDATE Subjekt SET Ulice = @Ulice WHERE Ico = @Ico";
+                using (connection = new SqlConnection(connectionString))
+                using (SqlCommand command = new SqlCommand(updateQuery, connection))
+                {
+                    connection.Open();
+                    //TODO validace záznamů, data typy, stejný záznamy - test PK jestli existuje?
+                    // TODO padá pokud upravím ičo na již existující ičo
+
+                    SqlParameter[] sqlParameters = new SqlParameter[] {
                     new SqlParameter("@Ico", 321),
                     new SqlParameter("@NewIco", 444),
                     new SqlParameter("@Nazev", "TestSubjekt4"),
@@ -150,42 +182,76 @@ namespace Subjects
                     new SqlParameter("@Poznamka", "čtyřka"),
                     new SqlParameter("@Vlozeno", DateTime.Now)
                 };
-                command.Parameters.AddRange(sqlParameters);
+                    command.Parameters.AddRange(sqlParameters);
 
-                //command.Parameters.AddWithValue("Ulice", "Maršála Koněva");
-                //command.Parameters.AddWithValue("Ico", 321);
-                command.ExecuteNonQuery();
+                    //command.Parameters.AddWithValue("Ulice", "Maršála Koněva");
+                    //command.Parameters.AddWithValue("Ico", 321);
+                    command.ExecuteNonQuery();
+                }
             }
+            catch (Exception exc)
+            {
+                MessageBox.Show(exc.Message, "Update Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // get list of rows where any cell is selected
+        //private List<DataGridViewRow> GetSelectedRows()
+        private IEnumerable<DataGridViewRow> GetSelectedRows()
+        {
+            List<DataGridViewRow> selectedRows = new List<DataGridViewRow>();
+            //foreach (DataGridViewCell cell in dataGridViewSubject.SelectedCells)
+
+            //foreach (DataGridViewCell cell in dataGridViewSubject.SelectedCells.Cast<DataGridViewCell>().OrderBy(c => c.RowIndex))
+            ////. .OrderBy(c => c.Index))
+            //{
+            //    selectedRows.Add(dataGridViewSubject.Rows[cell.RowIndex]);
+            //}
+            //return selectedRows;
+
+            IEnumerable<DataGridViewRow> selectedRowss = dataGridViewSubject.SelectedCells.Cast<DataGridViewCell>()
+                .Select(cell => cell.OwningRow).Distinct().OrderBy(c => c.Index);
+            return selectedRowss;
         }
 
         private void DeleteSubject()
         {
-            string updateQuery = "DELETE FROM Subjekt WHERE Ico = @Ico";
-            using (connection = new SqlConnection(connectionString))
-            using (SqlCommand command = new SqlCommand(updateQuery, connection))
+            try
             {
-                // get items to be deleted
-                List<DataGridViewRow> selectedRows = new List<DataGridViewRow>();
-                foreach (DataGridViewCell cell in dataGridViewSubject.SelectedCells)
+                string deleteQuery = "DELETE FROM Subjekt WHERE Ico = @Ico";
+                using (connection = new SqlConnection(connectionString))
+                using (SqlCommand command = new SqlCommand(deleteQuery, connection))
                 {
-                    selectedRows.Add(dataGridViewSubject.Rows[cell.RowIndex]);
-                }
+                    // get selected item rows to be deleted
+                    //List<DataGridViewRow> selectedRows = GetSelectedRows();
+                    IEnumerable<DataGridViewRow> selectedRows = GetSelectedRows();
 
-                // nothing selected
-                if (selectedRows.Count == 0)
-                    return;
+                    // nothing selected, return
+                    if (selectedRows.Count() == 0)
+                        return;
 
-                // delete selected rows
-                connection.Open();
-                command.Parameters.Add("Ico", SqlDbType.Int);
-                foreach (DataGridViewRow row in selectedRows)
-                {
-                    command.Parameters["Ico"].Value = row.Cells["Ico"].Value;
-                    command.ExecuteNonQuery();
+                    // confirm deletion, if no, skip deletion and return
+                    if (DialogResult.No == MessageBox.Show("Are you sure you want to delete selected item(s)?",
+                        "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning))
+                        return;
+
+                    // delete selected rows
+                    connection.Open();
+                    command.Parameters.Add("@Ico", SqlDbType.Int);
+                    foreach (DataGridViewRow row in selectedRows)
+                    {
+                        command.Parameters["@Ico"].Value = row.Cells["Ico"].Value;
+                        command.ExecuteNonQuery();
+                    }
                 }
+            }
+            catch (Exception exc)
+            {
+                MessageBox.Show(exc.Message, "Delete Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
+        #region ActionButtonMethods
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
         {
             RefreshData();
@@ -225,5 +291,6 @@ namespace Subjects
         {
             EditSubject();
         }
+        #endregion
     }
 }

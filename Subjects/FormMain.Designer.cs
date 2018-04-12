@@ -84,14 +84,14 @@
             // editToolStripMenuItem1
             // 
             this.editToolStripMenuItem1.Name = "editToolStripMenuItem1";
-            this.editToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.editToolStripMenuItem1.Size = new System.Drawing.Size(113, 22);
             this.editToolStripMenuItem1.Text = "Edit";
             this.editToolStripMenuItem1.Click += new System.EventHandler(this.editToolStripMenuItem1_Click);
             // 
             // deleteToolStripMenuItem
             // 
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
             this.deleteToolStripMenuItem.Text = "Delete";
             this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
             // 
@@ -174,19 +174,27 @@
             // 
             // dataGridViewSubject
             // 
+            this.dataGridViewSubject.AllowUserToAddRows = false;
+            this.dataGridViewSubject.AllowUserToDeleteRows = false;
             this.dataGridViewSubject.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewSubject.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridViewSubject.Location = new System.Drawing.Point(0, 0);
             this.dataGridViewSubject.Name = "dataGridViewSubject";
+            this.dataGridViewSubject.ReadOnly = true;
+            this.dataGridViewSubject.RowHeadersVisible = false;
             this.dataGridViewSubject.Size = new System.Drawing.Size(379, 512);
             this.dataGridViewSubject.TabIndex = 0;
             // 
             // dataGridViewContact
             // 
+            this.dataGridViewContact.AllowUserToAddRows = false;
+            this.dataGridViewContact.AllowUserToDeleteRows = false;
             this.dataGridViewContact.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewContact.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridViewContact.Location = new System.Drawing.Point(0, 0);
             this.dataGridViewContact.Name = "dataGridViewContact";
+            this.dataGridViewContact.ReadOnly = true;
+            this.dataGridViewContact.RowHeadersVisible = false;
             this.dataGridViewContact.Size = new System.Drawing.Size(401, 512);
             this.dataGridViewContact.TabIndex = 0;
             // 
