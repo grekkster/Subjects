@@ -16,6 +16,8 @@ namespace Subjects
     /// </summary>
     public partial class FormEditSubject : Form
     {
+        private const string FormCaptionUpdate = "Update Subject";
+        private const string FormCaptionInsert = "Insert Subject";
         private string connectionString;
         private DataGridViewRow rowToUpdate;
 
@@ -35,17 +37,17 @@ namespace Subjects
             // if selected row to update passed in constructor, fill in input data
             if (rowToUpdate != null)
             {
-                icoTextBox.Text = rowToUpdate.Cells["Ico"].Value.ToString();
-                nazevTextBox.Text = rowToUpdate.Cells["Nazev"].Value.ToString();
-                uliceTextBox.Text = rowToUpdate.Cells["Ulice"].Value.ToString();
-                obecTextBox.Text = rowToUpdate.Cells["Obec"].Value.ToString();
-                pscTextBox.Text = rowToUpdate.Cells["Psc"].Value.ToString().Trim();
-                poznamkaTextBox.Text = rowToUpdate.Cells["Poznamka"].Value.ToString();
-                Text = "Update Subject";
+                icoTextBox.Text = rowToUpdate.Cells[SubjectDbConstants.Ico].Value.ToString();
+                nazevTextBox.Text = rowToUpdate.Cells[SubjectDbConstants.Nazev].Value.ToString();
+                uliceTextBox.Text = rowToUpdate.Cells[SubjectDbConstants.Ulice].Value.ToString();
+                obecTextBox.Text = rowToUpdate.Cells[SubjectDbConstants.Obec].Value.ToString();
+                pscTextBox.Text = rowToUpdate.Cells[SubjectDbConstants.Psc].Value.ToString().Trim();
+                poznamkaTextBox.Text = rowToUpdate.Cells[SubjectDbConstants.Poznamka].Value.ToString();
+                Text = FormCaptionUpdate;
             }
             else
             {
-                Text = "Insert Subject";
+                Text = FormCaptionInsert;
             }
 
             // Set focus on first input
@@ -63,7 +65,8 @@ namespace Subjects
             var validationErrors = GetValidationErrors();
             if (validationErrors.Count > 0)
             {
-                MessageBox.Show(String.Join(Environment.NewLine, validationErrors), "Data Invalid", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(String.Join(Environment.NewLine, validationErrors),
+                    SubjectAppConstants.CaptionErrData, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -81,32 +84,33 @@ namespace Subjects
         {
             try
             {
-                string insertQuery = "INSERT INTO Subjekt VALUES (@Ico, @Nazev, @Ulice, @Obec, @Psc, @Poznamka, @Vlozeno)";
+                string insertQuery = SubjectDbConstants.QueryInsertSubject;
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 using (SqlCommand command = new SqlCommand(insertQuery, connection))
                 {
                     connection.Open();
 
                     SqlParameter[] sqlParameters = new SqlParameter[] {
-                        new SqlParameter("@Ico", icoTextBox.Text),
-                        new SqlParameter("@Nazev", nazevTextBox.Text),
-                        new SqlParameter("@Ulice", uliceTextBox.Text),
-                        new SqlParameter("@Obec", obecTextBox.Text),
-                        new SqlParameter("@Psc", pscTextBox.Text),
-                        new SqlParameter("@Poznamka", poznamkaTextBox.Text),
-                        new SqlParameter("@Vlozeno", DateTime.Now)
+                        new SqlParameter(SubjectDbConstants.ParamIco, icoTextBox.Text),
+                        new SqlParameter(SubjectDbConstants.ParamNazev, nazevTextBox.Text),
+                        new SqlParameter(SubjectDbConstants.ParamUlice, uliceTextBox.Text),
+                        new SqlParameter(SubjectDbConstants.ParamObec, obecTextBox.Text),
+                        new SqlParameter(SubjectDbConstants.ParamPsc, pscTextBox.Text),
+                        new SqlParameter(SubjectDbConstants.ParamPoznamka, poznamkaTextBox.Text),
+                        new SqlParameter(SubjectDbConstants.ParamVlozeno, DateTime.Now)
                     };
                     command.Parameters.AddRange(sqlParameters);
                     command.ExecuteNonQuery();
                 }
-                MessageBox.Show("Record successfully added.", "Insert Successfull", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(SubjectAppConstants.InfoRecordAdded, SubjectAppConstants.CaptionInfoRecordAdded,
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
                 
                 // Set focus on first input
                 this.ActiveControl = icoTextBox;
             }
             catch (Exception exc)
             {
-                MessageBox.Show(exc.Message, "Insert Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(exc.Message, SubjectAppConstants.CaptionErrInsert, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -117,22 +121,21 @@ namespace Subjects
         {
             try
             {
-                string updateQuery = "UPDATE Subjekt SET Ico = @NewIco, Nazev = @Nazev, Ulice = @Ulice, Obec = @Obec, Psc = @Psc," +
-                    "Poznamka = @Poznamka, Vlozeno = @Vlozeno WHERE Ico = @Ico";
+                string updateQuery = SubjectDbConstants.QueryUpdateSubject;
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 using (SqlCommand command = new SqlCommand(updateQuery, connection))
                 {
                     connection.Open();
 
                     SqlParameter[] sqlParameters = new SqlParameter[] {
-                        new SqlParameter("@Ico", rowToUpdate.Cells["Ico"].Value),
-                        new SqlParameter("@NewIco", icoTextBox.Text),
-                        new SqlParameter("@Nazev", nazevTextBox.Text),
-                        new SqlParameter("@Ulice", uliceTextBox.Text),
-                        new SqlParameter("@Obec", obecTextBox.Text),
-                        new SqlParameter("@Psc", pscTextBox.Text),
-                        new SqlParameter("@Poznamka", poznamkaTextBox.Text),
-                        new SqlParameter("@Vlozeno", DateTime.Now)
+                        new SqlParameter(SubjectDbConstants.ParamIco, rowToUpdate.Cells[SubjectDbConstants.Ico].Value),
+                        new SqlParameter(SubjectDbConstants.ParamNewIco, icoTextBox.Text),
+                        new SqlParameter(SubjectDbConstants.ParamNazev, nazevTextBox.Text),
+                        new SqlParameter(SubjectDbConstants.ParamUlice, uliceTextBox.Text),
+                        new SqlParameter(SubjectDbConstants.ParamObec, obecTextBox.Text),
+                        new SqlParameter(SubjectDbConstants.ParamPsc, pscTextBox.Text),
+                        new SqlParameter(SubjectDbConstants.ParamPoznamka, poznamkaTextBox.Text),
+                        new SqlParameter(SubjectDbConstants.ParamVlozeno, DateTime.Now)
                     };
                     command.Parameters.AddRange(sqlParameters);
                     command.ExecuteNonQuery();
@@ -141,7 +144,7 @@ namespace Subjects
             }
             catch (Exception exc)
             {
-                MessageBox.Show(exc.Message, "Update Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(exc.Message, SubjectAppConstants.CaptionErrUpdate, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -160,25 +163,25 @@ namespace Subjects
             }
             catch (Exception exc)
             {
-                validationErrors.Add("Enter valid Ico number.");
+                validationErrors.Add(SubjectAppConstants.MsgValidationIco);
             }
 
             // Nazev
             if (nazevTextBox.Text.Length > 60)
             {
-                validationErrors.Add("Maximal Nazev length is 60 characters.");
+                validationErrors.Add(SubjectAppConstants.MsgValidationNazev);
             }
 
             // Ulice
             if (uliceTextBox.Text.Length > 60)
             {
-                validationErrors.Add("Maximal Ulice length is 60 characters.");
+                validationErrors.Add(SubjectAppConstants.MsgValidationUlice);
             }
 
             // Obec
             if (obecTextBox.Text.Length > 60)
             {
-                validationErrors.Add("Maximal Obec length is 60 characters.");
+                validationErrors.Add(SubjectAppConstants.MsgValidationObec);
             }
 
             // Psc
@@ -188,12 +191,12 @@ namespace Subjects
             }
             catch (Exception exc)
             {
-                validationErrors.Add("Enter valid Psc number.");
+                validationErrors.Add(SubjectAppConstants.MsgValidationPsc);
             }
 
             if (pscTextBox.Text.Length > 5)
             {
-                validationErrors.Add("Maximal Psc length is 5 characters.");
+                validationErrors.Add(SubjectAppConstants.MsgValidationPscLen);
             }
 
             return validationErrors;

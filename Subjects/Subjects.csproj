@@ -81,6 +81,8 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SubjectAppConstants.cs" />
+    <Compile Include="SubjectDbConstants.cs" />
     <EmbeddedResource Include="FormEditSubject.resx">
       <DependentUpon>FormEditSubject.cs</DependentUpon>
     </EmbeddedResource>

@@ -17,6 +17,8 @@ namespace Subjects
     /// </summary>
     public partial class FormMain : Form
     {
+        public const string AppConfigConnectionString = "SubjectDBConnectionString";
+
         private string connectionString;
         private SqlConnection connection;
         private SqlDataAdapter adapter;
@@ -39,7 +41,7 @@ namespace Subjects
         private void FormMain_Load(object sender, EventArgs e)
         {
             // get connection string from app config
-            connectionString = ConfigurationManager.ConnectionStrings["SubjectDBConnectionString"].ConnectionString;
+            connectionString = ConfigurationManager.ConnectionStrings[AppConfigConnectionString].ConnectionString;
 
             // fill datagrids with database data
             LoadDBData();
@@ -60,8 +62,8 @@ namespace Subjects
                 DataSet dataset = new DataSet();
                 DataTable dataTableSubject = new DataTable();
                 DataTable dataTableContact = new DataTable();
-                string querySubjektString = "SELECT *, (SELECT COUNT(*) FROM Kontakt WHERE Kontakt.Ico = Subjekt.Ico) AS PocetKontaktu FROM Subjekt";
-                string queryKontaktString = "SELECT * FROM Kontakt";
+                string querySubjektString = SubjectDbConstants.QuerySelectSubject;
+                string queryKontaktString = SubjectDbConstants.QuerySelectContact;
                 using (connection = new SqlConnection(connectionString))
                 using (adapter = new SqlDataAdapter())
                 {
@@ -78,7 +80,7 @@ namespace Subjects
             }
             catch (Exception exc)
             {
-                MessageBox.Show(exc.Message, "Database Load Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(exc.Message, SubjectAppConstants.ErrDBLoad, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -131,7 +133,7 @@ namespace Subjects
         {
             try
             {
-                string deleteQuery = "DELETE FROM Subjekt WHERE Ico = @Ico";
+                string deleteQuery = SubjectDbConstants.QueryDeleteSubject;
                 using (connection = new SqlConnection(connectionString))
                 using (SqlCommand command = new SqlCommand(deleteQuery, connection))
                 {
@@ -143,8 +145,8 @@ namespace Subjects
                         return;
 
                     // confirm deletion, if no, skip deletion and return
-                    if (DialogResult.No == MessageBox.Show("Are you sure you want to delete selected item(s)?",
-                        "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning))
+                    if (DialogResult.No == MessageBox.Show(SubjectAppConstants.WrnDeleteItem,
+                        SubjectAppConstants.CaptionWrnDeleteItem, MessageBoxButtons.YesNo, MessageBoxIcon.Warning))
                         return;
 
                     // delete selected rows
@@ -159,7 +161,7 @@ namespace Subjects
             }
             catch (Exception exc)
             {
-                MessageBox.Show(exc.Message, "Delete Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(exc.Message, SubjectAppConstants.CaptionErrDeleteItem, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -238,7 +240,7 @@ namespace Subjects
             }
             catch (Exception exc)
             {
-                MessageBox.Show(exc.Message, "Export Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(exc.Message, SubjectAppConstants.CaptionErrExport, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -250,7 +252,8 @@ namespace Subjects
 
         private void helpToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(String.Join(Environment.NewLine + Environment.NewLine, helpLines.ToArray()), "Help", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(String.Join(Environment.NewLine + Environment.NewLine, helpLines.ToArray()),
+                SubjectAppConstants.CaptionInfoHelp, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         #endregion
     }
