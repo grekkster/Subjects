@@ -32,13 +32,17 @@ namespace Subjects
             connectionString = ConfigurationManager.ConnectionStrings["SubjectDBConnectionString"].ConnectionString;
 
             // fill datagrids with database data
-            RefreshData();
+            LoadDBData();
+
+            // set initial column width
+            dataGridViewSubject.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
+            dataGridViewContact.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
         }
 
         /// <summary>
         /// Get Subjekt and Kontakt table data, fill in dataGridViews
         /// </summary>
-        private void RefreshData()
+        private void LoadDBData()
         {
             try
             {
@@ -61,14 +65,10 @@ namespace Subjects
                     adapter.Fill(dataTableContact);
                     dataGridViewContact.DataSource = dataTableContact;
                 }
-
-                // set initial column width
-                dataGridViewSubject.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
-                dataGridViewContact.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
             }
             catch (Exception exc)
             {
-                MessageBox.Show(exc.Message, "Refresh Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(exc.Message, "Database Load Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -156,12 +156,12 @@ namespace Subjects
         #region ActionButtonMethods
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            RefreshData();
+            LoadDBData();
         }
 
         private void toolStripButtonRefresh_Click(object sender, EventArgs e)
         {
-            RefreshData();
+            LoadDBData();
         }
 
         private void insertToolStripMenuItem_Click(object sender, EventArgs e)
@@ -196,7 +196,7 @@ namespace Subjects
 
         private void refreshToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
-            RefreshData();
+            LoadDBData();
         }
 
         private void toolStripButtonExport_Click(object sender, EventArgs e)
@@ -231,12 +231,12 @@ namespace Subjects
                 MessageBox.Show(exc.Message, "Export Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        #endregion
 
         private void FormMain_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.F5)
-                RefreshData();
+                LoadDBData();
         }
+        #endregion
     }
 }

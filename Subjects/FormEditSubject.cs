@@ -47,6 +47,9 @@ namespace Subjects
             {
                 Text = "Insert Subject";
             }
+
+            // Set focus on first input
+            this.ActiveControl = icoTextBox;
         }
 
         /// <summary>
@@ -97,6 +100,9 @@ namespace Subjects
                     command.ExecuteNonQuery();
                 }
                 MessageBox.Show("Record successfully added.", "Insert Successfull", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                
+                // Set focus on first input
+                this.ActiveControl = icoTextBox;
             }
             catch (Exception exc)
             {
