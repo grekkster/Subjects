@@ -20,6 +20,16 @@ namespace Subjects
         private string connectionString;
         private SqlConnection connection;
         private SqlDataAdapter adapter;
+        private static List<string> helpLines = new List<string>()
+            {
+                $"Local database must be present in project directory for proper functionality.{Environment.NewLine}" +
+                    $"Connection string in app.config must be set correctly.",
+                "Select grid cell(s) in rows to be deleted, then click Delete button to delete data from database.",
+                "Select grid cell(s) in row to be edited, then click Edit button to update data from database.",
+                "Data can be refreshed with menu/toolbar Refresh button or with F5 key.",
+                "Ico and Psc input characters must be numbers only.",
+                "Insert/Update Subject form can be closed with Escape key and submitted with Enter key."
+            };
 
         public FormMain()
         {
@@ -236,6 +246,11 @@ namespace Subjects
         {
             if (e.KeyCode == Keys.F5)
                 LoadDBData();
+        }
+
+        private void helpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(String.Join(Environment.NewLine + Environment.NewLine, helpLines.ToArray()), "Help", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         #endregion
     }
