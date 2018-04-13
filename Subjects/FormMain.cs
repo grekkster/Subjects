@@ -198,6 +198,39 @@ namespace Subjects
         {
             RefreshData();
         }
+
+        private void toolStripButtonExport_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var sb = new StringBuilder();
+
+                var headers = dataGridViewSubject.Columns.Cast<DataGridViewColumn>();
+                sb.AppendLine(string.Join(",", headers.Select(column => "\"" + column.HeaderText + "\"").ToArray()));
+
+                foreach (DataGridViewRow row in dataGridViewSubject.Rows)
+                {
+                    var cells = row.Cells.Cast<DataGridViewCell>();
+                    sb.AppendLine(string.Join(",", cells.Select(cell => "\"" + cell.Value + "\"").ToArray()));
+                }
+
+                // Get the location and file name of the file to save from user. 
+                SaveFileDialog saveDialog = new SaveFileDialog();
+                saveDialog.Filter = "CSV files(*.csv)| *.csv|All files (*.*)|*.*";
+
+                if (saveDialog.ShowDialog() == DialogResult.OK)
+                {
+                    using (System.IO.StreamWriter sw = new System.IO.StreamWriter(saveDialog.FileName, false))
+                    {
+                        sw.WriteLine(sb.ToString());
+                    }
+                }
+            }
+            catch (Exception exc)
+            {
+                MessageBox.Show(exc.Message, "Export Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
         #endregion
 
         private void FormMain_KeyDown(object sender, KeyEventArgs e)
