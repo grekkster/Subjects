@@ -148,6 +148,7 @@
             // icoTextBox
             // 
             this.icoTextBox.Location = new System.Drawing.Point(78, 6);
+            this.icoTextBox.MaxLength = 8;
             this.icoTextBox.Name = "icoTextBox";
             this.icoTextBox.Size = new System.Drawing.Size(179, 20);
             this.icoTextBox.TabIndex = 18;
